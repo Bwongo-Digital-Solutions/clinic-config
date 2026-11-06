@@ -59,5 +59,12 @@
   "REGISTRATION_ALTERNATE_PHONE_NUMBER_VALIDATION": "Alternate phone number should have 6 to 15 digits",
 
   "PATIENT_DASHBOARD_REDIRECT": "Patient Dashboard",
-  "REGISTRATION_DEFAULT_SEARCH_LABEL": "Search"
+  "REGISTRATION_DEFAULT_SEARCH_LABEL": "Search",
+
+  "ugandaemr.address.village": "Village",
+  "ugandaemr.address.parish": "Parish",
+  "ugandaemr.address.subcounty": "Subcounty",
+  "ugandaemr.address.county": "County",
+  "ugandaemr.address.district": "District",
+  "ugandaemr.address.country": "Country"
 }
