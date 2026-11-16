@@ -1,8 +1,15 @@
 #!/bin/sh
-set -e
+set -eu
 
-echo "Rewriting Bahmni Config at /usr/local/bahmni_config"
-cp -r /etc/bahmni_config /usr/local/
+SOURCE_DIR="/etc/bahmni_config"
+CONFIG_VOLUME_DIR="/usr/local/bahmni_config"
 
-echo "Sleeping infinitely....."
-sleep infinity
+echo "Seeding Bahmni configuration into ${CONFIG_VOLUME_DIR}"
+mkdir -p "${CONFIG_VOLUME_DIR}"
+
+# Copy the contents, not the parent directory. The config volume is shared
+# with OpenMRS, Bahmni Web, reports, and the template service.
+cp -a "${SOURCE_DIR}/." "${CONFIG_VOLUME_DIR}/"
+
+echo "Bahmni configuration is ready."
+exec tail -f /dev/null
