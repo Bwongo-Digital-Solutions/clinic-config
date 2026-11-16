@@ -12,4 +12,4 @@ mkdir -p "${CONFIG_VOLUME_DIR}"
 cp -a "${SOURCE_DIR}/." "${CONFIG_VOLUME_DIR}/"
 
 echo "Bahmni configuration is ready."
-exec sleep infinity
+exec tail -f /dev/null
