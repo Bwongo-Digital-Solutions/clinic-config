@@ -6,6 +6,7 @@ on:
       - "openmrs/**"
       - "masterdata/**"
       - "print-templates/**"
+      - "web/**"
       - "package/docker/**"
       - ".github/workflows/publish_uganda_image.yml"
   push:
@@ -40,6 +41,7 @@ jobs:
           test -d openmrs
           test -d masterdata
           test -d print-templates
+          test -d web/images
           test -s package/docker/Dockerfile
           test -s package/docker/start.sh
           test -s masterdata/configuration/addresshierarchy/addressConfiguration.xml
