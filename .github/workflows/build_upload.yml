@@ -1,98 +1,102 @@
-name: Build and Upload
+name: Build and publish Uganda clinic config
+
 on:
+  pull_request:
+    paths:
+      - "openmrs/**"
+      - "masterdata/**"
+      - "print-templates/**"
+      - "package/docker/**"
+      - ".github/workflows/build_upload.yml"
   push:
     branches:
-      - main
-      - 'release-*'
+      - dev
     tags:
-      - '[0-9]+.[0-9]+.[0-9]+'
-    paths-ignore:
-      - "**.md"
-  workflow_run:
-    workflows: [Pull Translations from Transifex]
-    types: [completed]
-    branches:
-      - main
-      - 'release-*'
+      - "v*"
   workflow_dispatch:
 
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: uganda-clinic-config-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  IMAGE_NAME: ghcr.io/bwongo-digital-solutions/uganda-clinic-config
+
 jobs:
-  build-publish-docker-helm:
-    name: Build & Publish Docker Image & Helm Chart
+  build:
+    name: Validate and build image
     runs-on: ubuntu-latest
-    env:
-      HELM_CHART_PATH: package/helm/clinic-config
     steps:
-      - uses: actions/checkout@v2
-      - name: Set env.ARTIFACT_VERSION
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate required config directories
         run: |
-          wget -q https://raw.githubusercontent.com/Bahmni/bahmni-infra-utils/main/setArtifactVersion.sh && chmod +x setArtifactVersion.sh
-          ./setArtifactVersion.sh
-          rm setArtifactVersion.sh
+          set -eu
+          test -d openmrs
+          test -d masterdata
+          test -d print-templates
+          test -s package/docker/Dockerfile
+          test -s package/docker/start.sh
+          test -s masterdata/configuration/addresshierarchy/addressConfiguration.xml
+          test -s masterdata/configuration/addresshierarchy/addresshierarchy.csv
+
+      - name: Validate address hierarchy XML
+        run: |
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+          path = Path("masterdata/configuration/addresshierarchy/addressConfiguration.xml")
+          root = ET.parse(path).getroot()
+          wipe = root.findtext("wipe", default="").strip().lower()
+          if wipe != "false":
+              raise SystemExit(f"Refusing unsafe address hierarchy wipe setting: {wipe!r}")
+          filename = root.findtext("addressHierarchyFile/filename", default="").strip()
+          if not filename:
+              raise SystemExit("addressHierarchyFile/filename is missing")
+          csv_path = path.parent / filename
+          if not csv_path.is_file():
+              raise SystemExit(f"Configured address hierarchy CSV not found: {csv_path}")
+          print(f"Validated {path}; wipe=false; CSV={csv_path}")
+          PY
+
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        if: github.event_name != 'pull_request'
+        uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Docker - Login
-        uses: docker/login-action@v2
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-      - name: Docker - Build and push
-        uses: docker/build-push-action@v3
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate image tags
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
+            type=sha,prefix=sha-
+            type=ref,event=tag
+
+      - name: Build image (PR validation; publish on dev or tag)
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: package/docker/Dockerfile
           platforms: linux/amd64,linux/arm64
-          push: true
-          tags: bahmni/clinic-config:${{env.ARTIFACT_VERSION}},bahmni/clinic-config:latest
-      - name: Push Translations to Transifex
-        run: |
-          curl -o transifex.sh https://raw.githubusercontent.com/Bahmni/bahmni-infra-utils/main/transifex.sh
-          chmod +x transifex.sh
-          ./transifex.sh push
-          rm transifex.sh
-        env:
-          TX_TOKEN: ${{ secrets.TX_TOKEN }}
-      - name: Pull Bahmni Default Config Helm Chart
-        run: |
-          helm pull default-config --repo https://bahmni.github.io/helm-charts --devel --untar --untardir package/helm
-          mv package/helm/default-config/ package/helm/clinic-config/
-      - name: Update Chart values
-        run: |
-          yq --inplace '.image.repository = "bahmni"' $HELM_CHART_PATH/values.yaml
-          yq --inplace '.image.name = "clinic-config"' $HELM_CHART_PATH/values.yaml
-          yq --inplace '.image.tag = "${{ env.ARTIFACT_VERSION }}"' $HELM_CHART_PATH/values.yaml
-          yq --inplace '.version = "${{ env.ARTIFACT_VERSION }}"' $HELM_CHART_PATH/Chart.yaml
-          yq --inplace '.name = "clinic-config"' $HELM_CHART_PATH/Chart.yaml
-          yq --inplace '.description = "Helm chart for clinic-config of bahmni"' $HELM_CHART_PATH/Chart.yaml
-
-      - name: Helm Lint
-        run: helm lint $HELM_CHART_PATH
-
-      - name: Helm Package
-        run: helm package $HELM_CHART_PATH
-
-      - name: Helm - Checkout Charts Repository
-        uses: actions/checkout@v2
-        with:
-          repository: bahmni/helm-charts
-          ref: gh-pages
-          path: helm-charts
-          persist-credentials: false
-
-      - name: Helm - Copy chart
-        run: mkdir -p helm-charts/clinic-config/ && cp clinic-config-${{ env.ARTIFACT_VERSION }}.tgz helm-charts/clinic-config/
-
-      - name: Helm - reIndex
-        working-directory: helm-charts/
-        run: helm repo index --merge index.yaml --url https://bahmni.github.io/helm-charts/  .
-
-      - name: Helm - Publish Chart
-        working-directory: helm-charts/
-        run: |
-          git config user.name ${{ secrets.BAHMNI_USERNAME}}
-          git config user.email ${{ secrets.BAHMNI_EMAIL}}
-          git add .
-          git commit -m "Release of clinic-config-${{ env.ARTIFACT_VERSION }}"
-          git push 'https://${{ secrets.BAHMNI_USERNAME}}:${{ secrets.BAHMNI_PAT}}@github.com/bahmni/helm-charts.git' gh-pages
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
