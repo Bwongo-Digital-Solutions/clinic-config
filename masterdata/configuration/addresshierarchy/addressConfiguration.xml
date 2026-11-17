@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addressConfiguration>
-
-    <wipe>false</wipe>
+    <!-- Replaces address-hierarchy rows only; patient and clinical records are not deleted. -->
+    <wipe>true</wipe>
 
     <addressComponents>
         <addressComponent>
