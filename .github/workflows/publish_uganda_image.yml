@@ -7,6 +7,7 @@ on:
       - "masterdata/**"
       - "print-templates/**"
       - "web/**"
+      - "scripts/**"
       - "package/docker/**"
       - ".github/workflows/publish_uganda_image.yml"
   push:
@@ -44,10 +45,24 @@ jobs:
           test -d web/images
           test -s package/docker/Dockerfile
           test -s package/docker/start.sh
+          test -s scripts/build_uganda_address_hierarchy.py
           test -s masterdata/configuration/addresshierarchy/addressConfiguration.xml
-          test -s masterdata/configuration/addresshierarchy/addresshierarchy.csv
 
-      - name: Validate address hierarchy XML and safe import mode
+      - name: Generate and validate UBOS Uganda address hierarchy
+        run: |
+          set -eu
+          python3 scripts/build_uganda_address_hierarchy.py --output /tmp/addresshierarchy.csv
+          generated_rows="$(wc -l < /tmp/addresshierarchy.csv)"
+          if [ "$generated_rows" -lt 70000 ] || [ "$generated_rows" -gt 71679 ]; then
+            echo "Unexpected generated Uganda address path count: $generated_rows"
+            exit 1
+          fi
+          if grep -Eiq 'Himachal Pradesh|Kangra|India' /tmp/addresshierarchy.csv; then
+            echo "Non-Ugandan address data detected"
+            exit 1
+          fi
+
+      - name: Validate address hierarchy XML
         run: |
           python3 - <<'PY'
           import xml.etree.ElementTree as ET
@@ -55,15 +70,18 @@ jobs:
           path = Path("masterdata/configuration/addresshierarchy/addressConfiguration.xml")
           root = ET.parse(path).getroot()
           wipe = root.findtext("wipe", default="").strip().lower()
-          if wipe != "false":
-              raise SystemExit(f"Refusing unsafe address hierarchy wipe setting: {wipe!r}")
+          if wipe != "true":
+              raise SystemExit(f"Expected targeted address hierarchy replacement, got wipe={wipe!r}")
+          expected = ["COUNTRY", "COUNTY_DISTRICT", "STATE_PROVINCE", "ADDRESS_3", "ADDRESS_4", "ADDRESS_5"]
+          actual = [node.findtext("field", default="").strip() for node in root.findall("addressComponents/addressComponent")]
+          if actual != expected:
+              raise SystemExit(f"Unexpected address component order: {actual}")
+          if root.findtext("addressHierarchyFile/entryDelimiter", default="").strip() != chr(92) + "|":
+              raise SystemExit("Address hierarchy delimiter must be the escaped pipe regex")
           filename = root.findtext("addressHierarchyFile/filename", default="").strip()
-          if not filename:
-              raise SystemExit("addressHierarchyFile/filename is missing")
-          csv_path = path.parent / filename
-          if not csv_path.is_file():
-              raise SystemExit(f"Configured address hierarchy CSV not found: {csv_path}")
-          print(f"Validated {path}; wipe=false; CSV={csv_path}")
+          if filename != "addresshierarchy.csv":
+              raise SystemExit(f"Unexpected address hierarchy filename: {filename!r}")
+          print("Validated Uganda address hierarchy mapping and targeted replacement mode.")
           PY
 
       - name: Set up QEMU
