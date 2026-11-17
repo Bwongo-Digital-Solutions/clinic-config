@@ -57,7 +57,7 @@ jobs:
             echo "Unexpected generated Uganda address path count: $generated_rows"
             exit 1
           fi
-          if grep -Eiq 'Himachal Pradesh|Kangra|(^|\\|)India(\\||$)' /tmp/addresshierarchy.csv; then
+          if grep -Eiq 'Himachal Pradesh|Kangra|India' /tmp/addresshierarchy.csv; then
             echo "Non-Ugandan address data detected"
             exit 1
           fi
@@ -76,7 +76,7 @@ jobs:
           actual = [node.findtext("field", default="").strip() for node in root.findall("addressComponents/addressComponent")]
           if actual != expected:
               raise SystemExit(f"Unexpected address component order: {actual}")
-          if root.findtext("addressHierarchyFile/entryDelimiter", default="").strip() != r"\\|":
+          if root.findtext("addressHierarchyFile/entryDelimiter", default="").strip() != chr(92) + "|":
               raise SystemExit("Address hierarchy delimiter must be the escaped pipe regex")
           filename = root.findtext("addressHierarchyFile/filename", default="").strip()
           if filename != "addresshierarchy.csv":
