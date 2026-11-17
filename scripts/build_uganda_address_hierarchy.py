@@ -99,7 +99,7 @@ def main() -> int:
             raise SystemExit(f"Non-Ugandan address value detected: {forbidden}")
 
     print(
-        f"Generated {written_rows:,} unique Uganda address paths from "
+        f"Generated {written_rows:,} unique Uganda address paths "
         f"from {source_rows:,} UBOS village rows ({duplicate_paths:,} duplicate paths collapsed, "
         f"{normalized_quotes:,} quote marks normalized); "
         f"SHA-256 {actual_sha} -> {output_path}"
