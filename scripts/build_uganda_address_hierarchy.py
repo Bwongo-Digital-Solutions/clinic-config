@@ -10,7 +10,7 @@ from pathlib import Path
 
 SOURCE_URL = "https://pub-91f97fd178b74b919b3e8f204d254970.r2.dev/downloads/administrative-units/2026-11-13/gazetteer.csv"
 EXPECTED_SHA256 = "effbc52af0a37985acb205f3217f10014c32a8c9d6fca920ee942d38bea14b5c"
-EXPECTED_ROWS = 71679
+EXPECTED_SOURCE_ROWS = 71679
 FIELDS = (
     "district_name",
     "county_name",
@@ -47,7 +47,9 @@ def main() -> int:
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     seen = set()
-    rows = 0
+    source_rows = 0
+    written_rows = 0
+    duplicate_paths = 0
     with output_path.open("w", encoding="utf-8", newline="") as output:
         # Address Hierarchy splits on a regex delimiter, not a quote-aware CSV parser.
         # Use a pipe delimiter and reject characters that would break its path parser.
@@ -59,6 +61,7 @@ def main() -> int:
             lineterminator="\n",
         )
         for line_number, record in enumerate(reader, start=2):
+            source_rows += 1
             values = [record.get(field, "").strip() for field in FIELDS]
             if any(not value for value in values):
                 raise SystemExit(
@@ -69,14 +72,23 @@ def main() -> int:
                     f"Unsupported delimiter/quote in UBOS location name at row {line_number}: {values}"
                 )
             path = ("Uganda", *values)
+            # Some UBOS records have different source IDs but the same visible path.
+            # Keep one entry per distinct parent/name path for the hierarchy tree.
             if path in seen:
-                raise SystemExit(f"Duplicate address path at gazetteer row {line_number}: {path}")
+                duplicate_paths += 1
+                continue
             seen.add(path)
             writer.writerow(path)
-            rows += 1
+            written_rows += 1
 
-    if rows != EXPECTED_ROWS:
-        raise SystemExit(f"Unexpected UBOS village count: expected {EXPECTED_ROWS}, got {rows}")
+    if source_rows != EXPECTED_SOURCE_ROWS:
+        raise SystemExit(
+            f"Unexpected UBOS source row count: expected {EXPECTED_SOURCE_ROWS}, got {source_rows}"
+        )
+    if written_rows < 70000 or written_rows > EXPECTED_SOURCE_ROWS:
+        raise SystemExit(f"Unexpected number of unique address paths: {written_rows}")
+    if duplicate_paths > EXPECTED_SOURCE_ROWS * 0.01:
+        raise SystemExit(f"Too many duplicate address paths to safely deduplicate: {duplicate_paths}")
 
     generated = output_path.read_text(encoding="utf-8")
     for forbidden in ("Himachal Pradesh", "Kangra", "India"):
@@ -84,8 +96,9 @@ def main() -> int:
             raise SystemExit(f"Non-Ugandan address value detected: {forbidden}")
 
     print(
-        f"Generated {rows:,} Uganda address paths from UBOS gazetteer "
-        f"(SHA-256 {actual_sha}) -> {output_path}"
+        f"Generated {written_rows:,} unique Uganda address paths from "
+        f"{source_rows:,} UBOS village rows ({duplicate_paths:,} duplicate paths collapsed); "
+        f"SHA-256 {actual_sha} -> {output_path}"
     )
     return 0
 
