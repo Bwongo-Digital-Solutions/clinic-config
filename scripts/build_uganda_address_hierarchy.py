@@ -50,6 +50,7 @@ def main() -> int:
     source_rows = 0
     written_rows = 0
     duplicate_paths = 0
+    normalized_quotes = 0
     with output_path.open("w", encoding="utf-8", newline="") as output:
         # Address Hierarchy splits on a regex delimiter, not a quote-aware CSV parser.
         # Use a pipe delimiter and reject characters that would break its path parser.
@@ -62,14 +63,16 @@ def main() -> int:
         )
         for line_number, record in enumerate(reader, start=2):
             source_rows += 1
-            values = [record.get(field, "").strip() for field in FIELDS]
+            raw_values = [record.get(field, "").strip() for field in FIELDS]
+            normalized_quotes += sum(value.count(chr(34)) for value in raw_values)
+            values = [value.replace(chr(34), "") for value in raw_values]
             if any(not value for value in values):
                 raise SystemExit(
                     f"Missing administrative ancestor at gazetteer row {line_number}: {values}"
                 )
-            if any("|" in value or '"' in value for value in values):
+            if any("|" in value for value in values):
                 raise SystemExit(
-                    f"Unsupported delimiter/quote in UBOS location name at row {line_number}: {values}"
+                    f"Unsupported pipe delimiter in UBOS location name at row {line_number}: {values}"
                 )
             path = ("Uganda", *values)
             # Some UBOS records have different source IDs but the same visible path.
@@ -97,7 +100,7 @@ def main() -> int:
 
     print(
         f"Generated {written_rows:,} unique Uganda address paths from "
-        f"{source_rows:,} UBOS village rows ({duplicate_paths:,} duplicate paths collapsed); "
+        f"({duplicate_paths:,} duplicate paths collapsed, {normalized_quotes:,} quote marks normalized); "
         f"SHA-256 {actual_sha} -> {output_path}"
     )
     return 0
