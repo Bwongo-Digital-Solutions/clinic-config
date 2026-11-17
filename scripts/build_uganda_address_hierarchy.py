@@ -100,7 +100,8 @@ def main() -> int:
 
     print(
         f"Generated {written_rows:,} unique Uganda address paths from "
-        f"({duplicate_paths:,} duplicate paths collapsed, {normalized_quotes:,} quote marks normalized); "
+        f"from {source_rows:,} UBOS village rows ({duplicate_paths:,} duplicate paths collapsed, "
+        f"{normalized_quotes:,} quote marks normalized); "
         f"SHA-256 {actual_sha} -> {output_path}"
     )
     return 0
