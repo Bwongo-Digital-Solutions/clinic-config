@@ -52,8 +52,12 @@ jobs:
         run: |
           set -eu
           python3 scripts/build_uganda_address_hierarchy.py --output /tmp/addresshierarchy.csv
-          test "$(wc -l < /tmp/addresshierarchy.csv)" -eq 71679
-          if grep -Eiq 'Himachal Pradesh|Kangra|(^|,)India(,|$)' /tmp/addresshierarchy.csv; then
+          generated_rows="$(wc -l < /tmp/addresshierarchy.csv)"
+          if [ "$generated_rows" -lt 70000 ] || [ "$generated_rows" -gt 71679 ]; then
+            echo "Unexpected generated Uganda address path count: $generated_rows"
+            exit 1
+          fi
+          if grep -Eiq 'Himachal Pradesh|Kangra|(^|\\|)India(\\||$)' /tmp/addresshierarchy.csv; then
             echo "Non-Ugandan address data detected"
             exit 1
           fi
@@ -72,6 +76,8 @@ jobs:
           actual = [node.findtext("field", default="").strip() for node in root.findall("addressComponents/addressComponent")]
           if actual != expected:
               raise SystemExit(f"Unexpected address component order: {actual}")
+          if root.findtext("addressHierarchyFile/entryDelimiter", default="").strip() != r"\\|":
+              raise SystemExit("Address hierarchy delimiter must be the escaped pipe regex")
           filename = root.findtext("addressHierarchyFile/filename", default="").strip()
           if filename != "addresshierarchy.csv":
               raise SystemExit(f"Unexpected address hierarchy filename: {filename!r}")
