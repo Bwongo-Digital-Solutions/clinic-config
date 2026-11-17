@@ -54,7 +54,7 @@
 
     <addressHierarchyFile>
         <filename>addresshierarchy.csv</filename>
-        <entryDelimiter>,</entryDelimiter>
+        <entryDelimiter>\|</entryDelimiter>
         <identifierDelimiter>^</identifierDelimiter>
     </addressHierarchyFile>
 </addressConfiguration>
