@@ -4,7 +4,7 @@ The generated `addresshierarchy.csv` contains one complete path per village:
 
 `Uganda | District | County | Subcounty | Parish | Village`
 
-The file is headerless and uses the pipe delimiter required by the Address Hierarchy importer. The generator rejects missing ancestry, duplicate paths, and names containing the delimiter or unsupported quote character.
+The file is headerless and uses the pipe delimiter required by the Address Hierarchy importer. The generator rejects missing ancestry and pipe delimiters, collapses repeated identical parent/name paths, and removes quote marks from names where required by the Address Hierarchy importer.
 
 Source: Uganda Bureau of Statistics (UBOS), *Administrative units of Uganda* gazetteer snapshot dated 2026-11-13, published by Uganda Open Data. The pinned source file is 10,573,277 bytes and has SHA-256:
 
