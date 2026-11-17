@@ -57,10 +57,19 @@ jobs:
             echo "Unexpected generated Uganda address path count: $generated_rows"
             exit 1
           fi
-          if grep -Eiq 'Himachal Pradesh|Kangra|India' /tmp/addresshierarchy.csv; then
-            echo "Non-Ugandan address data detected"
-            exit 1
-          fi
+          python3 - <<'PY'
+          import csv
+          from pathlib import Path
+
+          forbidden = {"himachal pradesh", "kangra", "india"}
+          with Path("/tmp/addresshierarchy.csv").open(encoding="utf-8", newline="") as source:
+              for line_number, row in enumerate(csv.reader(source, delimiter="|"), start=1):
+                  matches = [value for value in row if value.strip().casefold() in forbidden]
+                  if matches:
+                      raise SystemExit(
+                          f"Non-Ugandan address value detected at generated row {line_number}: {matches}"
+                      )
+          PY
 
       - name: Validate address hierarchy XML
         run: |
