@@ -30,5 +30,6 @@
   "HOME_MODULE_REGISTRATION": "Registration",
   "HOME_MODULE_REPORTS": "Reports",
   "MODULE_LABEL_REGISTRATION_LEGACY_KEY": "Registration (Legacy)",
-  "MODULE_LABEL_APPOINTMENT_SCHEDULING_LEGACY_KEY": "Appointment Scheduling (Legacy)"
+  "MODULE_LABEL_APPOINTMENT_SCHEDULING_LEGACY_KEY": "Appointment Scheduling (Legacy)",
+  "LOGIN_PAGE_HEADER_TEXT": "ClinicHIS Login"
 }
