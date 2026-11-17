@@ -82,8 +82,8 @@ jobs:
           path = Path("masterdata/configuration/addresshierarchy/addressConfiguration.xml")
           root = ET.parse(path).getroot()
           wipe = root.findtext("wipe", default="").strip().lower()
-          if wipe != "true":
-              raise SystemExit(f"Expected targeted address hierarchy replacement, got wipe={wipe!r}")
+          if wipe != "false":
+              raise SystemExit(f"Expected non-destructive address hierarchy configuration, got wipe={wipe!r}")
           expected = ["COUNTRY", "COUNTY_DISTRICT", "STATE_PROVINCE", "ADDRESS_3", "ADDRESS_4", "ADDRESS_5"]
           actual = [node.findtext("field", default="").strip() for node in root.findall("addressComponents/addressComponent")]
           if actual != expected:
