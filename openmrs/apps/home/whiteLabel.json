@@ -1,16 +1,16 @@
 {
   "homePage": {
-    "header_text": "<b>WELCOME TO<br />ClininHIS FOR CLINICS",
-    "logo": "/bahmni_config/web/images/clinichis-logo.svg",
+    "header_text": "<b>WELCOME TO<br />ClinicHIS FOR CLINICS",
+    "logo": "/bahmni_config/openmrs/apps/home/clinichis-logo.svg",
     "title_text": " "
   },
   "loginPage": {
-    "logo": "/bahmni_config/web/images/clinichis-logo.svg",
+    "logo": "/bahmni_config/openmrs/apps/home/clinichis-logo.svg",
     "showHeaderText": true,
     "showTitleText": false,
     "bottomLogos": [
-      "/bahmni_config/web/images/clinichis.png",
-      "/bahmni_config/web/images/eron-logo.png"
+      "/bahmni_config/openmrs/apps/home/clinichis.png",
+      "/bahmni_config/openmrs/apps/home/eron-logo.png"
     ]
   },
   "helpLink": {
