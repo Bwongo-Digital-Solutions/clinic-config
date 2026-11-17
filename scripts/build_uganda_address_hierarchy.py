@@ -93,16 +93,19 @@ def main() -> int:
     if duplicate_paths > EXPECTED_SOURCE_ROWS * 0.01:
         raise SystemExit(f"Too many duplicate address paths to safely deduplicate: {duplicate_paths}")
 
-    # Validate complete hierarchy fields, not substrings. A substring check
-    # falsely rejects legitimate Ugandan place names containing words such as
-    # "India" as part of a longer name.
-    forbidden_values = {"himachal pradesh", "kangra", "india"}
+    # The country is fixed to Uganda. Check known Indian administrative
+    # names only in the district column; village names are user-facing source
+    # data and may coincidentally equal words such as "India".
+    forbidden_districts = {"himachal pradesh", "kangra", "india"}
     with output_path.open(encoding="utf-8", newline="") as generated_file:
         for row_number, row in enumerate(csv.reader(generated_file, delimiter="|"), start=1):
-            matches = [value for value in row if value.strip().casefold() in forbidden_values]
-            if matches:
+            if len(row) != 6 or row[0].strip().casefold() != "uganda":
                 raise SystemExit(
-                    f"Non-Ugandan address value detected at generated row {row_number}: {matches}"
+                    f"Invalid Uganda hierarchy path at generated row {row_number}: {row}"
+                )
+            if row[1].strip().casefold() in forbidden_districts:
+                raise SystemExit(
+                    f"Non-Ugandan district detected at generated row {row_number}: {row[1]}"
                 )
 
     print(
