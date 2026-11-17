@@ -2,7 +2,9 @@
 
 The generated `addresshierarchy.csv` contains one complete path per village:
 
-`Uganda, District, County, Subcounty, Parish, Village`
+`Uganda | District | County | Subcounty | Parish | Village`
+
+The file is headerless and uses the pipe delimiter required by the Address Hierarchy importer. The generator rejects missing ancestry, duplicate paths, and names containing the delimiter or unsupported quote character.
 
 Source: Uganda Bureau of Statistics (UBOS), *Administrative units of Uganda* gazetteer snapshot dated 2026-11-13, published by Uganda Open Data. The pinned source file is 10,573,277 bytes and has SHA-256:
 
@@ -10,6 +12,6 @@ Source: Uganda Bureau of Statistics (UBOS), *Administrative units of Uganda* gaz
 
 The dataset has 71,679 village records and is licensed CC BY 4.0. Attribution: Uganda Bureau of Statistics (UBOS); dataset publisher: Uganda Open Data.
 
-The image build downloads this pinned snapshot, verifies its checksum, validates all ancestry columns and row count, then converts it into Bahmni's six-level, headerless hierarchy format. The import uses `<wipe>true</wipe>` to replace the existing address-hierarchy entries (including the incorrect India hierarchy). This wipe is limited to the address-hierarchy data; it does not delete patient records, visits, encounters, or other OpenMRS clinical data.
+The image build downloads this pinned snapshot, verifies its checksum, validates all ancestry columns and row count, then converts it into Bahmni's six-level, headerless hierarchy format. The import uses `<wipe>true</wipe>` to replace the existing address-hierarchy entries (including the incorrect India hierarchy). This wipe is limited to the address-hierarchy tables; it does not delete patient records, visits, encounters, or other OpenMRS clinical data. Patient addresses themselves are stored as text values rather than keyed references to hierarchy entries.
 
 To refresh the snapshot in future, update the source URL, SHA-256, expected row count, and this attribution note together after reviewing the new UBOS release.
