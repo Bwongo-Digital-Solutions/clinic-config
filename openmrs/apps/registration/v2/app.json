@@ -19,7 +19,7 @@
     "isLastNameMandatory": true,
     "addressHierarchy": {
       "showAddressFieldsTopDown": false,
-      "strictAutocompleteFromLevel": "postalCode"
+      "strictAutocompleteFromLevel": "address5"
     },
     "additionalPatientInformation": {
       "translationKey": "REGISTRATION_ADDITIONAL_PATIENT_INFORMATION_TITLE",
