@@ -22,7 +22,7 @@ FIELDS = (
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output", required=True, help="Destination CSV (without a header)")
+    parser.add_argument("--output", required=True, help="Destination hierarchy file (without a header)")
     args = parser.parse_args()
 
     request = urllib.request.Request(
@@ -38,8 +38,7 @@ def main() -> int:
             f"UBOS gazetteer checksum mismatch: expected {EXPECTED_SHA256}, got {actual_sha}"
         )
 
-    text = payload.decode("utf-8-sig")
-    reader = csv.DictReader(io.StringIO(text, newline=""))
+    reader = csv.DictReader(io.StringIO(payload.decode("utf-8-sig"), newline=""))
     required = {"village_id", *FIELDS}
     missing = required.difference(reader.fieldnames or [])
     if missing:
@@ -50,12 +49,24 @@ def main() -> int:
     seen = set()
     rows = 0
     with output_path.open("w", encoding="utf-8", newline="") as output:
-        writer = csv.writer(output, quoting=csv.QUOTE_MINIMAL, lineterminator="\n")
+        # Address Hierarchy splits on a regex delimiter, not a quote-aware CSV parser.
+        # Use a pipe delimiter and reject characters that would break its path parser.
+        writer = csv.writer(
+            output,
+            delimiter="|",
+            quoting=csv.QUOTE_NONE,
+            escapechar="\\",
+            lineterminator="\n",
+        )
         for line_number, record in enumerate(reader, start=2):
             values = [record.get(field, "").strip() for field in FIELDS]
             if any(not value for value in values):
                 raise SystemExit(
                     f"Missing administrative ancestor at gazetteer row {line_number}: {values}"
+                )
+            if any("|" in value or '"' in value for value in values):
+                raise SystemExit(
+                    f"Unsupported delimiter/quote in UBOS location name at row {line_number}: {values}"
                 )
             path = ("Uganda", *values)
             if path in seen:
