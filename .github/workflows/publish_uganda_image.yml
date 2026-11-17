@@ -61,13 +61,16 @@ jobs:
           import csv
           from pathlib import Path
 
-          forbidden = {"himachal pradesh", "kangra", "india"}
+          forbidden_districts = {"himachal pradesh", "kangra", "india"}
           with Path("/tmp/addresshierarchy.csv").open(encoding="utf-8", newline="") as source:
               for line_number, row in enumerate(csv.reader(source, delimiter="|"), start=1):
-                  matches = [value for value in row if value.strip().casefold() in forbidden]
-                  if matches:
+                  if len(row) != 6 or row[0].strip().casefold() != "uganda":
                       raise SystemExit(
-                          f"Non-Ugandan address value detected at generated row {line_number}: {matches}"
+                          f"Invalid Uganda hierarchy path at generated row {line_number}: {row}"
+                      )
+                  if row[1].strip().casefold() in forbidden_districts:
+                      raise SystemExit(
+                          f"Non-Ugandan district detected at generated row {line_number}: {row[1]}"
                       )
           PY
 
