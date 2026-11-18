@@ -1,21 +1,23 @@
 {% extends "_base/portrait.html" %}
 
-{% block title %}OPD{% endblock %}
+{% block title %}Prescription{% endblock %}
 
 {# ── Header: centered logo + clinic name + address + "Prescriptions" title ── #}
 {% block header %}
 <div class="print-header">
   <h1 class="print-title-with-logo">
    <div>
-    <img src="/bahmni_config/openmrs/apps/home/logo.png" height="30" width="100" alt="logo" />
+    <img src="/bahmni_config/openmrs/apps/home/clinichis-logo.svg" height="34" alt="ClinicHIS" /><strong>ClinicHIS</strong>{% if config.hospitalLogoUrl %}<img src="{{ config.hospitalLogoUrl }}" class="hospital-logo" alt="Hospital logo" />{% endif %}
   </div>
     {{ 'REGISTRATION_INSTITUTION_NAME' | t }}
   </h1>
   <div class="clinic-info">
-    <span>Prescriptions</span>
+    <span>Prescription</span>
   </div>
 </div>
 {% endblock %}
+
+{% block styles %}.hospital-logo { max-width:80px; max-height:42px; object-fit:contain; } .print-header { text-align:center; border-bottom:2px solid #222; padding-bottom:8px; }{% endblock %}
 
 {% block content %}
 
