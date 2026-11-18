@@ -9,37 +9,37 @@
             <nameMapping>Country</nameMapping>
             <sizeMapping>40</sizeMapping>
             <elementDefault>Uganda</elementDefault>
-            <requiredInHierarchy>true</requiredInHierarchy>
+            <requiredInHierarchy>false</requiredInHierarchy>
         </addressComponent>
         <addressComponent>
             <field>COUNTY_DISTRICT</field>
             <nameMapping>District</nameMapping>
             <sizeMapping>40</sizeMapping>
-            <requiredInHierarchy>true</requiredInHierarchy>
+            <requiredInHierarchy>false</requiredInHierarchy>
         </addressComponent>
         <addressComponent>
             <field>STATE_PROVINCE</field>
             <nameMapping>County</nameMapping>
             <sizeMapping>40</sizeMapping>
-            <requiredInHierarchy>true</requiredInHierarchy>
+            <requiredInHierarchy>false</requiredInHierarchy>
         </addressComponent>
         <addressComponent>
             <field>ADDRESS_3</field>
             <nameMapping>Subcounty</nameMapping>
             <sizeMapping>60</sizeMapping>
-            <requiredInHierarchy>true</requiredInHierarchy>
+            <requiredInHierarchy>false</requiredInHierarchy>
         </addressComponent>
         <addressComponent>
             <field>ADDRESS_4</field>
             <nameMapping>Parish</nameMapping>
             <sizeMapping>60</sizeMapping>
-            <requiredInHierarchy>true</requiredInHierarchy>
+            <requiredInHierarchy>false</requiredInHierarchy>
         </addressComponent>
         <addressComponent>
             <field>ADDRESS_5</field>
             <nameMapping>Village</nameMapping>
             <sizeMapping>60</sizeMapping>
-            <requiredInHierarchy>true</requiredInHierarchy>
+            <requiredInHierarchy>false</requiredInHierarchy>
         </addressComponent>
     </addressComponents>
 
