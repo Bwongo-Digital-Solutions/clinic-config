@@ -7,7 +7,7 @@
 <div class="print-header">
   <h1 class="print-title-with-logo">
    <div>
-    <img src="/bahmni_config/openmrs/apps/home/clinichis-logo.svg" height="34" alt="ClinicHIS" /><strong>ClinicHIS</strong>{% if config.hospitalLogoUrl %}<img src="{{ config.hospitalLogoUrl }}" class="hospital-logo" alt="Hospital logo" />{% endif %}
+    {% if config.hospitalLogoUrl %}<img src="{{ config.hospitalLogoUrl }}" class="hospital-logo" alt="Hospital logo" />{% endif %}
   </div>
     {{ 'REGISTRATION_INSTITUTION_NAME' | t }}
   </h1>
@@ -102,4 +102,4 @@
 {% endblock %}
 
 {# ── No footer ── #}
-{% block footer %}{% endblock %}
+
