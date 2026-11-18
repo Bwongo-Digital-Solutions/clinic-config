@@ -14,6 +14,9 @@
       padding: 10mm;
     }
 
+    .card-brand { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:5px; font-weight:bold; }
+    .card-brand img { max-width:28px; max-height:28px; object-fit:contain; }
+    .card-hospital-logo { max-width:55px; max-height:32px; }
     .card-header { font-size: 13pt; font-weight: bold; text-align: center; margin-bottom: 8px; }
     .card-facility { font-size: 10pt; text-align: center; margin-bottom: 12px; color: #444; }
 
@@ -40,10 +43,9 @@
     #}
     {% block header %}
       {% if config.facilityName or config.header %}
+      <div class="card-brand"><img src="/bahmni_config/openmrs/apps/home/clinichis-logo.svg" alt="ClinicHIS" /><span>ClinicHIS</span>{% if config.hospitalLogoUrl %}<img class="card-hospital-logo" src="{{ config.hospitalLogoUrl }}" alt="Hospital logo" />{% endif %}</div>
       <div class="card-header">{{ config.facilityName | default('') }}</div>
-      {% if config.header %}
-        <div class="card-facility">{{ config.header | t }}</div>
-      {% endif %}
+      {% if config.header %}<div class="card-facility">{{ config.header | t }}</div>{% endif %}
       {% endif %}
     {% endblock %}
 
