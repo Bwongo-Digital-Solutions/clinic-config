@@ -44,7 +44,7 @@
 
 <div>
     <div>
-        <div style="text-align:center;font-weight:bold;margin:8px 0"><img src="/bahmni_config/openmrs/apps/home/clinichis-logo.svg" alt="ClinicHIS" style="max-width:30px;max-height:30px;vertical-align:middle"/> ClinicHIS</div>
+        
         <h4>{{::'APPOINTMENT_LIST' | translate}}</h4>
         <h5 ng-if="!searchedPatient">{{::'APPOINTMENT_DATE' | translate}} {{::startDate | bahmniDate}}</h5>
         <table cellpadding="2" cellspacing="0">
@@ -85,6 +85,7 @@
             </tr>
             </tbody>
         </table>
+        <div style="text-align:center;font-size:8pt;color:#666;margin-top:10px"><img src="/bahmni_config/openmrs/apps/home/clinichis.png" alt="ClinicHIS" style="max-width:22px;max-height:22px;vertical-align:middle"/> Powered by ClinicHIS</div>
     </div>
 </div>
 </body>
