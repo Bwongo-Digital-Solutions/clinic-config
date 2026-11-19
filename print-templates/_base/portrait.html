@@ -35,6 +35,9 @@
       padding-bottom: 8px;
       margin-bottom: 16px;
     }
+    .doc-header .brand { display:flex; align-items:center; gap:12px; flex:1; }
+    .doc-header .brand img { max-width:42px; max-height:42px; object-fit:contain; }
+    .doc-header .hospital-logo { max-width:90px; max-height:52px; }
     .doc-header .facility { flex: 1; }
     .doc-header .facility h1 { font-size: 14pt; font-weight: bold; }
     .doc-header .facility h2 { font-size: 12pt; font-weight: normal; margin-top: 2px; }
@@ -128,6 +131,8 @@
       font-size: 9pt;
       color: #555;
     }
+    .system-brand { display:flex; align-items:center; justify-content:center; gap:6px; margin-top:8px; font-size:8pt; color:#666; }
+    .system-brand img { max-width:22px; max-height:22px; object-fit:contain; }
     .signature-line {
       margin-top: 32px;
       display: flex;
@@ -173,11 +178,12 @@
     {% block header %}
       {% if config.facilityName or config.header %}
       <div class="doc-header">
-        <div class="facility">
-          <h1>{{ config.facilityName | default('') }}</h1>
-          {% if config.header %}
-            <h2>{{ config.header | t }}</h2>
-          {% endif %}
+        <div class="brand">
+          <div class="facility">
+            <h1>{{ config.facilityName | default('') }}</h1>
+            {% if config.header %}<h2>{{ config.header | t }}</h2>{% endif %}
+          </div>
+          {% if config.hospitalLogoUrl %}<img class="hospital-logo" src="{{ config.hospitalLogoUrl }}" alt="Hospital logo" />{% endif %}
         </div>
         <div class="doc-date">{{ 'DATE' | t }}: {{ now | dateFormat }}</div>
       </div>
@@ -191,11 +197,10 @@
       Override this block to add template-specific elements like signature lines.
     #}
     {% block footer %}
-      {% if config.footer %}
       <div class="doc-footer">
-        <p>{{ config.footer }}</p>
+        {% if config.footer %}<p>{{ config.footer }}</p>{% endif %}
+        <div class="system-brand"><img src="/bahmni_config/openmrs/apps/home/clinichis.png" alt="ClinicHIS" /> <span>Powered by ClinicHIS</span></div>
       </div>
-      {% endif %}
     {% endblock %}
   </div>
 </body>

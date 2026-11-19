@@ -6,13 +6,15 @@
 <div class="print-header">
   <div class="print-title-with-logo">
     <div>
-      <img src="/bahmni_config/openmrs/apps/home/logo.png" height="30" width="100" alt="logo" />
+      {% if config.hospitalLogoUrl %}<img src="{{ config.hospitalLogoUrl }}" class="hospital-logo" alt="Hospital logo" />{% endif %}
       <h1>{{ 'REGISTRATION_INSTITUTION_NAME' | t }}</h1>
     </div>
     <span class="clinic-info">{{ 'ENCOUNTER_PRESCRIPTION_TITLE' | t }}</span>
   </div>
 </div>
 {% endblock %}
+
+{% block styles %}.hospital-logo { max-width:80px; max-height:42px; object-fit:contain; } .print-title-with-logo { text-align:center; border-bottom:2px solid #222; padding-bottom:8px; }{% endblock %}
 
 {% block content %}
 
@@ -230,4 +232,4 @@
 
 {% endblock %}
 
-{% block footer %}{% endblock %}
+

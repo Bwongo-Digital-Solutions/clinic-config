@@ -14,6 +14,9 @@
       padding: 10mm;
     }
 
+    .card-hospital-logo { max-width:90px; max-height:52px; object-fit:contain; }
+    .system-brand { display:flex; align-items:center; justify-content:center; gap:6px; margin-top:8px; font-size:8pt; color:#666; }
+    .system-brand img { max-width:22px; max-height:22px; object-fit:contain; }
     .card-header { font-size: 13pt; font-weight: bold; text-align: center; margin-bottom: 8px; }
     .card-facility { font-size: 10pt; text-align: center; margin-bottom: 12px; color: #444; }
 
@@ -40,10 +43,9 @@
     #}
     {% block header %}
       {% if config.facilityName or config.header %}
+      
       <div class="card-header">{{ config.facilityName | default('') }}</div>
-      {% if config.header %}
-        <div class="card-facility">{{ config.header | t }}</div>
-      {% endif %}
+      {% if config.header %}<div class="card-facility">{{ config.header | t }}</div>{% endif %}
       {% endif %}
     {% endblock %}
 
@@ -54,11 +56,10 @@
       Override when template-specific footer content is needed.
     #}
     {% block footer %}
-      {% if config.footer %}
       <div style="text-align:center; font-size:9pt; color:#555; margin-top:8px;">
-        {{ config.footer }}
+        {% if config.footer %}{{ config.footer }}{% endif %}
+        <div class="system-brand"><img src="/bahmni_config/openmrs/apps/home/clinichis.png" alt="ClinicHIS" /> <span>Powered by ClinicHIS</span></div>
       </div>
-      {% endif %}
     {% endblock %}
   </div>
 </body>
