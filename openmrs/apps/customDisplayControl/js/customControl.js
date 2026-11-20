@@ -229,6 +229,13 @@ angular.module('bahmni.common.displaycontrol.custom')
                     withCredentials: true
                 });
             };
+
+            var getFacilityBranding = function () {
+                return $http.get(appService.configBaseUrl() + "/home/branding.json", {
+                    method: "GET",
+                    withCredentials: true
+                });
+            };
             var getAttributeValue = function (attributeList,attributeFieldValue) {
                  var selectedAttribute = attributeList.find(attribute =>
                                             (!attribute.voided) && attribute.attributeType.display === attributeFieldValue
@@ -257,10 +264,12 @@ angular.module('bahmni.common.displaycontrol.custom')
                                 ? 1 : ((b) > a) ? -1 : 0;
             }
 
-            $q.all([getLoggedInUser(), getVisits(), getClinicLocation()]).then(function (response) {
+            $q.all([getLoggedInUser(), getVisits(), getClinicLocation(), getFacilityBranding()]).then(function (response) {
                 var data = response[0].data;
                 var observationData = response[1].data;
                 var locationsData = response[2].data;
+                $scope.branding = response[3].data || {};
+                $scope.registeredClinicLogo = $scope.branding.facilityLogoUrl || '';
                 var personDetails;
 
                if (data.results.length > 0) {
@@ -291,8 +300,8 @@ angular.module('bahmni.common.displaycontrol.custom')
                 }
                 if (locationsData.results.length > 0) {
                     var location = locationsData.results[0];
-                    $scope.registeredClinicName = location.name;
-                    $scope.registeredClinicAddress = getAttributeValue(location.attributes, addressAndLocationAttributes);
+                    $scope.registeredClinicName = $scope.branding.facilityName || location.name;
+                    $scope.registeredClinicAddress = $scope.branding.facilityAddress || getAttributeValue(location.attributes, addressAndLocationAttributes);
                 }
             });
         };
