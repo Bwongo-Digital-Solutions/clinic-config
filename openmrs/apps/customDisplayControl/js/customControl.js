@@ -234,6 +234,8 @@ angular.module('bahmni.common.displaycontrol.custom')
                 return $http.get(appService.configBaseUrl() + "/home/branding.json", {
                     method: "GET",
                     withCredentials: true
+                }).catch(function () {
+                    return { data: {} };
                 });
             };
             var getAttributeValue = function (attributeList,attributeFieldValue) {
