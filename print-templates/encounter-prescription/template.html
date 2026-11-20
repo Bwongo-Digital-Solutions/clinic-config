@@ -6,8 +6,8 @@
 <div class="print-header">
   <div class="print-title-with-logo">
     <div>
-      <img src="/bahmni_config/openmrs/apps/home/eron-logo.png" class="hospital-logo" alt="Eron Medical Services logo" />
-      <h1>{{ 'REGISTRATION_INSTITUTION_NAME' | t }}</h1>
+      {% if data.branding.facilityLogoUrl %}<img src="{{ data.branding.facilityLogoUrl }}" class="hospital-logo" alt="{{ data.branding.facilityName | default('Facility') }} logo" />{% endif %}
+      <h1>{{ data.branding.facilityName | default('REGISTRATION_INSTITUTION_NAME' | t) }}</h1>
     </div>
     <span class="clinic-info">{{ 'ENCOUNTER_PRESCRIPTION_TITLE' | t }}</span>
   </div>
