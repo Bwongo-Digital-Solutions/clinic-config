@@ -42,9 +42,9 @@
       matching the compact card layout. Override in child templates when needed.
     #}
     {% block header %}
-      {% if config.facilityName or config.header %}
+      {% if data.branding.facilityName or config.facilityName or config.header %}
       
-      <div class="card-header">{{ config.facilityName | default('') }}</div>
+      <div class="card-header">{{ data.branding.facilityName | default(config.facilityName | default('')) }}</div>
       {% if config.header %}<div class="card-facility">{{ config.header | t }}</div>{% endif %}
       {% endif %}
     {% endblock %}
