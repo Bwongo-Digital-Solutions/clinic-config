@@ -1,5 +1,4 @@
 {% extends "_base/portrait.html" %}
-{% set branding = data.branding | default({}) %}
 
 {% block title %}{{ 'ENCOUNTER_PRESCRIPTION_TITLE' | t }}{% endblock %}
 
@@ -7,8 +6,8 @@
 <div class="print-header">
   <div class="print-title-with-logo">
     <div>
-      {% if branding and branding.facilityLogoUrl %}<img src="{{ branding.facilityLogoUrl }}" class="hospital-logo" alt="{{ branding.facilityName | default('Facility') }} logo" />{% endif %}
-      <h1>{{ branding.facilityName | default('REGISTRATION_INSTITUTION_NAME' | t) }}</h1>
+      {% if config.hospitalLogoUrl %}<img src="{{ config.hospitalLogoUrl }}" class="hospital-logo" alt="Hospital logo" />{% endif %}
+      <h1>{{ 'REGISTRATION_INSTITUTION_NAME' | t }}</h1>
     </div>
     <span class="clinic-info">{{ 'ENCOUNTER_PRESCRIPTION_TITLE' | t }}</span>
   </div>

@@ -37,15 +37,14 @@
 </head>
 <body>
   <div class="page">
-    {% set branding = data.branding | default({}) %}
     {#
       Generic header block — renders facility name and document title centered,
       matching the compact card layout. Override in child templates when needed.
     #}
     {% block header %}
-      {% if branding.facilityName or config.facilityName or config.header %}
+      {% if config.facilityName or config.header %}
       
-      <div class="card-header">{{ branding.facilityName | default(config.facilityName | default('')) }}</div>
+      <div class="card-header">{{ config.facilityName | default('') }}</div>
       {% if config.header %}<div class="card-facility">{{ config.header | t }}</div>{% endif %}
       {% endif %}
     {% endblock %}

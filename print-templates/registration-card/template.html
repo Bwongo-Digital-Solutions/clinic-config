@@ -1,5 +1,4 @@
 {% extends "_base/landscape.html" %}
-{% set branding = data.branding | default({}) %}
 
 {% block title %}{{ 'REGISTRATION_CARD' | t }}{% endblock %}
 
@@ -70,10 +69,10 @@ h1, h2, h3 { text-align: center; }
       <table>
         <tr>
           <td class="logo">
-            {% if branding and branding.facilityLogoUrl %}<img src="{{ branding.facilityLogoUrl }}" alt="{{ branding.facilityName | default('Facility') }} logo" />{% endif %}
+            {% if config.hospitalLogoUrl %}<img src="{{ config.hospitalLogoUrl }}" alt="Hospital logo" />{% endif %}
           </td>
           <td class="print-table-right-header">
-            <h3>{{ branding.facilityName | default('REGISTRATION_INSTITUTION_NAME' | t) }}</h3>
+            <h3>{{ 'REGISTRATION_INSTITUTION_NAME' | t }}</h3>
             <h3 class="print-center">{{ 'REGISTRATION_INSTITUTION_REGISTERED' | t }}</h3>
           </td>
           <td class="registrationCard-photo">
@@ -85,7 +84,7 @@ h1, h2, h3 { text-align: center; }
         </tr>
         <tr>
           <td colspan="3" class="print-center registrationCard-location">
-            {{ branding.facilityAddress | default('REGISTRATION_INSTITUTION_ADDRESS' | t) }}
+            {{ 'REGISTRATION_INSTITUTION_ADDRESS' | t }}
           </td>
         </tr>
       </table>

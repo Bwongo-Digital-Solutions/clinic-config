@@ -169,7 +169,6 @@
 </head>
 <body>
   <div class="page">
-    {% set branding = data.branding | default({}) %}
     {#
       Generic header block — rendered automatically for every template that
       extends this base. A child template overrides {% block header %} when it
@@ -177,14 +176,14 @@
       by setting config.facilityName / config.header in templates.json.
     #}
     {% block header %}
-      {% if branding.facilityName or config.facilityName or config.header %}
+      {% if config.facilityName or config.header %}
       <div class="doc-header">
         <div class="brand">
           <div class="facility">
-            <h1>{{ branding.facilityName | default(config.facilityName | default('')) }}</h1>
+            <h1>{{ config.facilityName | default('') }}</h1>
             {% if config.header %}<h2>{{ config.header | t }}</h2>{% endif %}
           </div>
-          {% if (branding and branding.facilityLogoUrl) or config.hospitalLogoUrl %}<img class="hospital-logo" src="{{ branding.facilityLogoUrl | default(config.hospitalLogoUrl) }}" alt="Facility logo" />{% endif %}
+          {% if config.hospitalLogoUrl %}<img class="hospital-logo" src="{{ config.hospitalLogoUrl }}" alt="Hospital logo" />{% endif %}
         </div>
         <div class="doc-date">{{ 'DATE' | t }}: {{ now | dateFormat }}</div>
       </div>
