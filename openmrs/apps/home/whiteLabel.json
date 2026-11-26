@@ -9,8 +9,11 @@
     "showHeaderText": true,
     "showTitleText": false,
     "bottomLogos": [
-      "/bahmni_config/openmrs/apps/home/eron-logo.png"
-    ]
+      "/bahmni_config/openmrs/apps/home/clinichis.png"
+    ],
+    "poweredByText": "Powered By:",
+    "contactPhone": "0775-874-454",
+    "contactEmail": "tmkmart@gmail.com"
   },
   "helpLink": {
     "url": "https://bahmni.atlassian.net/wiki/display/BAH/Bahmni+Home"
