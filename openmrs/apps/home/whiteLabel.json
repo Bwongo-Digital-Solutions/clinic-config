@@ -10,14 +10,10 @@
     "showTitleText": false,
     "bottomLogos": [
       "/bahmni_config/openmrs/apps/home/clinichis.png"
-<<<<<<< HEAD
     ],
     "poweredByText": "Powered By:",
     "contactPhone": "0775-874-454",
     "contactEmail": "tmkmart@gmail.com"
-=======
-    ]
->>>>>>> af4df83 (Fix login page ClinicHIS footer branding)
   },
   "helpLink": {
     "url": "https://bahmni.atlassian.net/wiki/display/BAH/Bahmni+Home"
