@@ -44,7 +44,7 @@
         "PULSE_14": "Pulse",
         "BLOOD_PRESSURE_18": "Blood Pressure",
         "ARTERIAL_BLOOD_OXYGEN_SATURATION_(PULSE_OXIMETER)_15": "Arterial blood oxygen saturation (pulse oximeter)",
-        "TEMPERATURE_17_DESC": "Patient's temperature in Fahrenheit"
+        "TEMPERATURE_17_DESC": "Patient's temperature in degrees Celsius"
       },
       "formName": "Vitals",
       "formUuid": null,
